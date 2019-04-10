@@ -1,3 +1,19 @@
+/** 
+ * Karlis Kiste
+ * 
+ * Arduino based, RFID-enabled jukebox.
+ * 
+ * TODO:
+ * - Sometimes a track is repeated (after button press?)
+ * - Prevent fwd/back on pause
+ * - Stop and sleep after pausing for a time (2 min?)
+ * 
+ * 
+ * BSD 3-Clause License
+ * Copyright (c) 2019, Sven Kissner
+ * 
+ * / 
+
 #include "Arduino.h"
 #include "SoftwareSerial.h"
 #include <DFMiniMp3.h>
@@ -103,8 +119,10 @@ DFMiniMp3<SoftwareSerial, Mp3Notify> player(softSerial);
  * All valid UIDs, one for each folder. 
  */
 byte validUids[][4] = {
-  {0xB6, 0xC8, 0x10, 0x1A}, // Tag 0
-  {0xC6, 0xEA, 0x3B, 0x1E}, // Tag 1
+  //{0xB6, 0xC8, 0x10, 0x1A}, // Tag 0 (Card)
+  {0x04, 0x4E, 0x9D, 0x1A}, // Tag 0 (Sticker)
+  {0x04, 0x2F, 0x9D, 0x1A}, // Tag 1 (Sticker)
+  //{0xC6, 0xEA, 0x3B, 0x1E}, // Tag 1 (Card)
   {0x3C, 0x04, 0x4C, 0xD3}, // Tag 2
   {0x6B, 0x51, 0x4C, 0xD3}, // Tag 3
 };
@@ -202,9 +220,9 @@ void setup() {
   buttonForward.onPressed(onButtonPressForward);
   buttonBack.onPressed(onButtonPressBack);
 
-  buttonPlay.onPressedFor(longpress, onButtonPressedForPlay);
-  buttonForward.onPressedFor(longpress, onButtonPressedForForward);
-  buttonBack.onPressedFor(longpress, onButtonPressedForBack);
+  // buttonPlay.onPressedFor(longpress, onButtonPressedForPlay);
+  // buttonForward.onPressedFor(longpress, onButtonPressedForForward);
+  // buttonBack.onPressedFor(longpress, onButtonPressedForBack);
 
   pinMode(LED_PLAY, OUTPUT);
   pinMode(LED_FORWARD, OUTPUT);
@@ -297,7 +315,7 @@ void blinkTagFound() {
 }
 
 
-int checkUID(byte uid[4]) {
+int checkUID(byte uid[8]) {
 
   for (int i = 0; i < nFolders; i++) {
     if ((uid[0] == validUids[i][0]) &&
