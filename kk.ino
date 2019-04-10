@@ -3,7 +3,7 @@
  * 
  * Arduino based, RFID-enabled jukebox.
  * 
- * TODO:
+ * TO:
  * - Sometimes a track is repeated (after button press?)
  * - Prevent fwd/back on pause
  * - Stop and sleep after pausing for a time (2 min?)
@@ -11,8 +11,7 @@
  * 
  * BSD 3-Clause License
  * Copyright (c) 2019, Sven Kissner
- * 
- * / 
+ */ 
 
 #include "Arduino.h"
 #include "SoftwareSerial.h"
