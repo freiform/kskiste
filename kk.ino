@@ -75,38 +75,39 @@ static void continuePlayback(uint16_t track);
  * Notifications for DFMiniMp3
  */
 class Mp3Notify {
-  public:
-    static void OnError(uint16_t errorCode) {
-      // see DfMp3_Error for code meaning
-      Serial.println();
-      Serial.print("Com Error ");
-      Serial.println(errorCode);
+public:
+  static void PrintlnSourceAction(DfMp3_PlaySources source, const char* action) {
+    if (source & DfMp3_PlaySources_Sd) {
+        Serial.print("SD Card, ");
     }
-  
-    static void OnPlayFinished(uint16_t globalTrack) {
-      Serial.println();
-      Serial.print("Play finished for #");
-      Serial.println(globalTrack);
-      continuePlayback(globalTrack);
+    if (source & DfMp3_PlaySources_Usb) {
+        Serial.print("USB Disk, ");
     }
-  
-    static void OnCardOnline(uint16_t code) {
-      Serial.println();
-      Serial.print("Card online ");
-      Serial.println(code);     
+    if (source & DfMp3_PlaySources_Flash) {
+        Serial.print("Flash, ");
     }
-  
-    static void OnCardInserted(uint16_t code) {
-      Serial.println();
-      Serial.print("Card inserted ");
-      Serial.println(code); 
-    }
-  
-    static void OnCardRemoved(uint16_t code) {
-      Serial.println();
-      Serial.print("Card removed ");
-      Serial.println(code);  
-    }
+    Serial.println(action);
+  }
+  static void OnError(uint16_t errorCode) {
+    // see DfMp3_Error for code meaning
+    Serial.println();
+    Serial.print("Com Error ");
+    Serial.println(errorCode);
+  }
+  static void OnPlayFinished(DfMp3_PlaySources source, uint16_t track) {
+    Serial.print("Play finished for #");
+    Serial.println(track);
+    continuePlayback(track);
+  }
+  static void OnPlaySourceOnline(DfMp3_PlaySources source) {
+    PrintlnSourceAction(source, "online");
+  }
+  static void OnPlaySourceInserted(DfMp3_PlaySources source) {
+    PrintlnSourceAction(source, "inserted");
+  }
+  static void OnPlaySourceRemoved(DfMp3_PlaySources source) {
+    PrintlnSourceAction(source, "removed");
+  }
 };
 
 
@@ -119,11 +120,11 @@ DFMiniMp3<SoftwareSerial, Mp3Notify> player(softSerial);
  */
 byte validUids[][4] = {
   //{0xB6, 0xC8, 0x10, 0x1A}, // Tag 0 (Card)
-  {0x04, 0x4E, 0x9D, 0x1A}, // Tag 0 (Sticker)
-  {0x04, 0x2F, 0x9D, 0x1A}, // Tag 1 (Sticker)
-  //{0xC6, 0xEA, 0x3B, 0x1E}, // Tag 1 (Card)
-  {0x3C, 0x04, 0x4C, 0xD3}, // Tag 2
-  {0x6B, 0x51, 0x4C, 0xD3}, // Tag 3
+  {0x04, 0x4E, 0x9D, 0x1A}, // 
+  {0x04, 0x2F, 0x9D, 0x1A}, // 
+  {0x04, 0x29, 0x9D, 0x1A}, // 
+  {0x04, 0x17, 0x9D, 0x1A}, // 
+  {0x04, 0x23, 0x9D, 0x1A}, // 
 };
 
 /*
